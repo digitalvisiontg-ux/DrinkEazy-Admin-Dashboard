@@ -340,10 +340,10 @@ class _OrdersPageState extends State<OrdersPage> {
               clipBehavior:
                   Clip.none, // important pour que le badge dépasse légèrement
               children: [
-                const Icon(Icons.notifications_none, size: 28),
+                const Icon(Icons.notifications_none, size: 30),
                 Positioned(
-                  right: -2, // décale légèrement vers l'extérieur
-                  top: -2, // décale légèrement vers le haut
+                  right: -8, // décale légèrement vers l'extérieur
+                  top: -10, // décale légèrement vers le haut
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 4,
@@ -354,14 +354,14 @@ class _OrdersPageState extends State<OrdersPage> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     constraints: const BoxConstraints(
-                      minWidth: 16,
-                      minHeight: 16,
+                      minWidth: 20,
+                      minHeight: 20,
                     ),
                     child: const Text(
                       '4',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 10,
+                        fontSize: 12,
                         fontWeight: FontWeight.bold,
                       ),
                       textAlign: TextAlign.center,
