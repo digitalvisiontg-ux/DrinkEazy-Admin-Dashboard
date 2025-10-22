@@ -36,9 +36,9 @@ class _StatPageState extends State<StatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       body: Stack(
         children: [
-          // --- Contenu principal ---
           Column(
             children: [
               AppBar(
