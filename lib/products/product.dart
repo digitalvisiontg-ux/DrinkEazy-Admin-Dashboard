@@ -13,56 +13,56 @@ class _ProductState extends State<Product> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Produits'),
-        elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Stack(
-              clipBehavior:
-                  Clip.none, // important pour que le badge dépasse légèrement
-              children: [
-                const Icon(Icons.notifications_none, size: 30),
-                Positioned(
-                  right: -8, // décale légèrement vers l'extérieur
-                  top: -10, // décale légèrement vers le haut
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 4,
-                      vertical: 1,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    constraints: const BoxConstraints(
-                      minWidth: 20,
-                      minHeight: 20,
-                    ),
-                    child: const Text(
-                      '4',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Icône filtre
-          const SizedBox(width: 12),
-        ],
-      ),
       body: Column(
         children: [
+          AppBar(
+            title: const Text('Produits'),
+            elevation: 0,
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black,
+            actions: [
+              IconButton(
+                onPressed: () {},
+                icon: Stack(
+                  clipBehavior: Clip
+                      .none, // important pour que le badge dépasse légèrement
+                  children: [
+                    const Icon(Icons.notifications_none, size: 30),
+                    Positioned(
+                      right: -8, // décale légèrement vers l'extérieur
+                      top: -10, // décale légèrement vers le haut
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 4,
+                          vertical: 1,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 20,
+                          minHeight: 20,
+                        ),
+                        child: const Text(
+                          '4',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Icône filtre
+              const SizedBox(width: 12),
+            ],
+          ),
           _buildSearchBar(),
           Expanded(
             child: SingleChildScrollView(
@@ -93,7 +93,9 @@ class _ProductState extends State<Product> {
                       ),
                       elevation: 3,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      _bottomSheet(context);
+                    },
                     child: const Text(
                       "+ Ajouter un produit",
                       style: TextStyle(
@@ -404,4 +406,120 @@ class _ProductState extends State<Product> {
       ),
     );
   }
+}
+
+void _bottomSheet(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true, // permet au contenu de s'adapter à la hauteur
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (BuildContext bc) {
+      return SingleChildScrollView(
+        child: Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Nouveau produit",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.close),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Nom du produit',
+                  labelStyle: TextStyle(color: Colors.grey),
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Prix (€)',
+                  labelStyle: TextStyle(color: Colors.grey),
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 20),
+
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Stock initial',
+                  labelStyle: TextStyle(color: Colors.grey),
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 30),
+
+              TextFormField(
+                maxLines: 3,
+                decoration: InputDecoration(
+                  labelText: 'Description (optionnel)',
+                  labelStyle: TextStyle(color: Colors.grey),
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 20),
+
+              // Boutons
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      minimumSize: const Size(150, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(color: Colors.grey),
+                      ),
+                    ),
+                    child: const Text(
+                      "Annuler",
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      minimumSize: const Size(150, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      "Ajouter",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }

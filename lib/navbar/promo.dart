@@ -188,7 +188,6 @@ class _PromoState extends State<Promo> {
     );
   }
 
-  
   void _showAddPromoDialog() {
     showDialog(
       context: context,
@@ -201,212 +200,219 @@ class _PromoState extends State<Promo> {
             horizontal: 16,
             vertical: 20,
           ),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Titre
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: StatefulBuilder(
+            builder: (context, setState) {
+              // 👈 Ici on a un setState local
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Modifier la promotion",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.close),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-
-                // Produit concerné
-                const Text("Produit concerné"),
-                const SizedBox(height: 6),
-                DropdownButtonFormField<String>(
-                  value: selectedProduit,
-                  items: const [
-                    DropdownMenuItem(
-                      value: "Bière Blonde - 4.5€",
-                      child: Text("Bière Blonde - 4.5€"),
-                    ),
-                    DropdownMenuItem(
-                      value: "Sandwich Club - 6€",
-                      child: Text("Sandwich Club - 6€"),
-                    ),
-                  ],
-                  onChanged: (v) => setState(() => selectedProduit = v!),
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Type de promotion
-                const Text("Type de promotion"),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    Expanded(
-                      child: ChoiceChip(
-                        label: const Text("Prix réduit"),
-                        selected: selectedTypePromo == "Prix réduit",
-                        onSelected: (_) =>
-                            setState(() => selectedTypePromo = "Prix réduit"),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: ChoiceChip(
-                        label: const Text("Offre spéciale"),
-                        selected: selectedTypePromo == "Offre spéciale",
-                        onSelected: (_) => setState(
-                          () => selectedTypePromo = "Offre spéciale",
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-
-                // Type de réduction
-                const Text("Type de réduction"),
-                const SizedBox(height: 6),
-                DropdownButtonFormField<String>(
-                  value: selectedTypeReduction,
-                  items: const [
-                    DropdownMenuItem(
-                      value: "Pourcentage (%)",
-                      child: Text("Pourcentage (%)"),
-                    ),
-                    DropdownMenuItem(
-                      value: "Montant (€)",
-                      child: Text("Montant (€)"),
-                    ),
-                  ],
-                  onChanged: (v) => setState(() => selectedTypeReduction = v!),
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Valeur réduction
-                const Text("Valeur de la réduction"),
-                const SizedBox(height: 6),
-                TextField(
-                  controller: reductionController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    suffixText: selectedTypeReduction == "Pourcentage (%)"
-                        ? "%"
-                        : "€",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Dates
-                const Text("Date de début"),
-                const SizedBox(height: 6),
-                TextField(
-                  readOnly: true,
-                  controller: TextEditingController(
-                    text:
-                        "${dateDebut.day}/${dateDebut.month}/${dateDebut.year}",
-                  ),
-                  onTap: () async {
-                    final picked = await showDatePicker(
-                      context: context,
-                      initialDate: dateDebut,
-                      firstDate: DateTime(2023),
-                      lastDate: DateTime(2026),
-                    );
-                    if (picked != null) setState(() => dateDebut = picked);
-                  },
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    suffixIcon: const Icon(Icons.calendar_today),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                const Text("Date de fin"),
-                const SizedBox(height: 6),
-                TextField(
-                  readOnly: true,
-                  controller: TextEditingController(
-                    text: "${dateFin.day}/${dateFin.month}/${dateFin.year}",
-                  ),
-                  onTap: () async {
-                    final picked = await showDatePicker(
-                      context: context,
-                      initialDate: dateFin,
-                      firstDate: DateTime(2023),
-                      lastDate: DateTime(2026),
-                    );
-                    if (picked != null) setState(() => dateFin = picked);
-                  },
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    suffixIcon: const Icon(Icons.calendar_today),
-                  ),
-                ),
-                const SizedBox(height: 24),
-
-                // Boutons
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.pop(context),
-                        style: OutlinedButton.styleFrom(
-                          minimumSize: const Size(double.infinity, 48),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: const Text("Annuler"),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          minimumSize: const Size(double.infinity, 48),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: const Text(
-                          "Modifier",
+                    // === Titre ===
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Modifier la promotion",
                           style: TextStyle(
-                            color: Colors.white,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
+                        IconButton(
+                          onPressed: () => Navigator.pop(context),
+                          icon: const Icon(Icons.close),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+
+                    // === Produit concerné ===
+                    const Text("Produit concerné"),
+                    const SizedBox(height: 6),
+                    DropdownButtonFormField<String>(
+                      value: selectedProduit,
+                      items: const [
+                        DropdownMenuItem(
+                          value: "Bière Blonde - 4.5€",
+                          child: Text("Bière Blonde - 4.5€"),
+                        ),
+                        DropdownMenuItem(
+                          value: "Sandwich Club - 6€",
+                          child: Text("Sandwich Club - 6€"),
+                        ),
+                      ],
+                      onChanged: (v) => setState(() => selectedProduit = v!),
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // === Type de promotion ===
+                    const Text("Type de promotion"),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ChoiceChip(
+                            label: const Text("Prix réduit"),
+                            selected: selectedTypePromo == "Prix réduit",
+                            onSelected: (_) => setState(
+                              () => selectedTypePromo = "Prix réduit",
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: ChoiceChip(
+                            label: const Text("Offre spéciale"),
+                            selected: selectedTypePromo == "Offre spéciale",
+                            onSelected: (_) => setState(
+                              () => selectedTypePromo = "Offre spéciale",
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+
+                    // === Type de réduction ===
+                    const Text("Type de réduction"),
+                    const SizedBox(height: 6),
+                    DropdownButtonFormField<String>(
+                      value: selectedTypeReduction,
+                      items: const [
+                        DropdownMenuItem(
+                          value: "Pourcentage (%)",
+                          child: Text("Pourcentage (%)"),
+                        ),
+                        DropdownMenuItem(
+                          value: "Montant (€)",
+                          child: Text("Montant (€)"),
+                        ),
+                      ],
+                      onChanged: (v) =>
+                          setState(() => selectedTypeReduction = v!),
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // === Valeur de la réduction ===
+                    const Text("Valeur de la réduction"),
+                    const SizedBox(height: 6),
+                    TextField(
+                      controller: reductionController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        suffixText: selectedTypeReduction == "Pourcentage (%)"
+                            ? "%"
+                            : "€",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // === Dates ===
+                    const Text("Date de début"),
+                    const SizedBox(height: 6),
+                    TextField(
+                      readOnly: true,
+                      controller: TextEditingController(
+                        text:
+                            "${dateDebut.day}/${dateDebut.month}/${dateDebut.year}",
+                      ),
+                      onTap: () async {
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: dateDebut,
+                          firstDate: DateTime(2023),
+                          lastDate: DateTime(2026),
+                        );
+                        if (picked != null) setState(() => dateDebut = picked);
+                      },
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        suffixIcon: const Icon(Icons.calendar_today),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text("Date de fin"),
+                    const SizedBox(height: 6),
+                    TextField(
+                      readOnly: true,
+                      controller: TextEditingController(
+                        text: "${dateFin.day}/${dateFin.month}/${dateFin.year}",
+                      ),
+                      onTap: () async {
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: dateFin,
+                          firstDate: DateTime(2023),
+                          lastDate: DateTime(2026),
+                        );
+                        if (picked != null) setState(() => dateFin = picked);
+                      },
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        suffixIcon: const Icon(Icons.calendar_today),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // === Boutons ===
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => Navigator.pop(context),
+                            style: OutlinedButton.styleFrom(
+                              minimumSize: const Size(double.infinity, 48),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: const Text("Annuler"),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                              minimumSize: const Size(double.infinity, 48),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: const Text(
+                              "Modifier",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
+              );
+            },
           ),
         );
       },
