@@ -7,8 +7,14 @@ class Product extends StatefulWidget {
   State<Product> createState() => _ProductState();
 }
 
+enum OrderStatus { pending, confirmed, refused }
+
 class _ProductState extends State<Product> {
   bool _showFilters = false;
+  OrderStatus? _statusFilter;
+  String? _tableFilter;
+  String? _dateFilter;
+  String? _amountFilter;
 
   @override
   Widget build(BuildContext context) {
@@ -377,28 +383,191 @@ class _ProductState extends State<Product> {
                   "Filtres Avancés",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {},
-                    child: const Text('Réinitialiser'),
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _statusFilter = null;
+                      _tableFilter = null;
+                      _dateFilter = null;
+                      _amountFilter = null;
+                    });
+                  },
+                  child: const Text('Réinitialiser'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+
+            // Première ligne : Statut & Table
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text("Statut"),
+                      const SizedBox(height: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade400),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: DropdownButton<OrderStatus?>(
+                          isExpanded: true,
+                          underline: const SizedBox(),
+                          value: _statusFilter,
+                          items: const [
+                            DropdownMenuItem(value: null, child: Text('Tous')),
+                            DropdownMenuItem(
+                              value: OrderStatus.pending,
+                              child: Text('En attente'),
+                            ),
+                            DropdownMenuItem(
+                              value: OrderStatus.confirmed,
+                              child: Text('Confirmé'),
+                            ),
+                            DropdownMenuItem(
+                              value: OrderStatus.refused,
+                              child: Text('Refusé'),
+                            ),
+                          ],
+                          onChanged: (value) =>
+                              setState(() => _statusFilter = value),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text("Table"),
+                      const SizedBox(height: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade400),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: DropdownButton<String?>(
+                          isExpanded: true,
+                          underline: const SizedBox(),
+                          value: _tableFilter,
+                          items: const [
+                            DropdownMenuItem(
+                              value: null,
+                              child: Text('Toutes'),
+                            ),
+                            DropdownMenuItem(
+                              value: '1',
+                              child: Text('Table 1'),
+                            ),
+                            DropdownMenuItem(
+                              value: '2',
+                              child: Text('Table 2'),
+                            ),
+                            DropdownMenuItem(
+                              value: '3',
+                              child: Text('Table 3'),
+                            ),
+                          ],
+                          onChanged: (value) =>
+                              setState(() => _tableFilter = value),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
-            const Row(
-              children: [
-                Expanded(child: Text('Statut')),
-                SizedBox(width: 10),
-                Expanded(child: Text('Table')),
-              ],
-            ),
             const SizedBox(height: 10),
-            const Row(
+
+            // Deuxième ligne : Date & Montant
+            Row(
               children: [
-                Expanded(child: Text('Date')),
-                SizedBox(width: 10),
-                Expanded(child: Text('Montant')),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text("Date"),
+                      const SizedBox(height: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade400),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: DropdownButton<String?>(
+                          isExpanded: true,
+                          underline: const SizedBox(),
+                          value: _dateFilter,
+                          items: const [
+                            DropdownMenuItem(
+                              value: null,
+                              child: Text('Toutes'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'today',
+                              child: Text("Aujourd'hui"),
+                            ),
+                            DropdownMenuItem(
+                              value: 'week',
+                              child: Text("Cette semaine"),
+                            ),
+                            DropdownMenuItem(
+                              value: 'month',
+                              child: Text("Ce mois"),
+                            ),
+                          ],
+                          onChanged: (value) =>
+                              setState(() => _dateFilter = value),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text("Montant"),
+                      const SizedBox(height: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade400),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: DropdownButton<String?>(
+                          isExpanded: true,
+                          underline: const SizedBox(),
+                          value: _amountFilter,
+                          items: const [
+                            DropdownMenuItem(value: null, child: Text('Tous')),
+                            DropdownMenuItem(
+                              value: '0-50',
+                              child: Text('0 - 50 €'),
+                            ),
+                            DropdownMenuItem(
+                              value: '50-100',
+                              child: Text('50 - 100 €'),
+                            ),
+                            DropdownMenuItem(
+                              value: '+100',
+                              child: Text('+100 €'),
+                            ),
+                          ],
+                          onChanged: (value) =>
+                              setState(() => _amountFilter = value),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ],

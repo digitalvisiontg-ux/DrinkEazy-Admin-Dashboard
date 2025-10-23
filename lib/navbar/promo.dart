@@ -132,20 +132,34 @@ class _PromoState extends State<Promo> {
                             ),
                           ),
                           const Spacer(),
+
+                          // === Icône modifier
                           IconButton(
                             onPressed: () {},
                             icon: const Icon(Icons.edit, color: Colors.blue),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
                           ),
+                          const SizedBox(width: 6),
+
+                          // === Icône pause
                           IconButton(
                             onPressed: () {},
                             icon: const Icon(Icons.pause, color: Colors.orange),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
                           ),
+                          const SizedBox(width: 6),
+
+                          // === Icône supprimer
                           IconButton(
                             onPressed: () {},
                             icon: const Icon(
                               Icons.delete_outline,
                               color: Colors.red,
                             ),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
                           ),
                         ],
                       ),
