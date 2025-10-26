@@ -107,62 +107,87 @@ class _PromoState extends State<Promo> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          const Text(
-                            'Bière Blonde',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.greenAccent,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: const Text(
-                              'Active',
-                              style: TextStyle(fontSize: 12),
-                            ),
-                          ),
-                          const Spacer(),
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          return Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              // === Nom du produit (texte flexible)
+                              Expanded(
+                                child: Text(
+                                  'Bière Blonde',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                  overflow: TextOverflow
+                                      .ellipsis, // coupe si trop long
+                                ),
+                              ),
 
-                          // === Icône modifier
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.edit, color: Colors.blue),
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                          ),
-                          const SizedBox(width: 6),
+                              const SizedBox(width: 8),
 
-                          // === Icône pause
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.pause, color: Colors.orange),
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                          ),
-                          const SizedBox(width: 6),
+                              // === Badge statut
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.greenAccent,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: const Text(
+                                  'Active',
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                              ),
 
-                          // === Icône supprimer
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(
-                              Icons.delete_outline,
-                              color: Colors.red,
-                            ),
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                          ),
-                        ],
+                              const SizedBox(width: 8),
+
+                              // === Icônes d’action (dans un Row compact)
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(
+                                      Icons.edit,
+                                      color: Colors.blue,
+                                    ),
+                                    padding: EdgeInsets.zero,
+                                    constraints: const BoxConstraints(),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(
+                                      Icons.pause,
+                                      color: Colors.orange,
+                                    ),
+                                    padding: EdgeInsets.zero,
+                                    constraints: const BoxConstraints(),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(
+                                      Icons.delete_outline,
+                                      color: Colors.red,
+                                    ),
+                                    padding: EdgeInsets.zero,
+                                    constraints: const BoxConstraints(),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        },
                       ),
+
+                      const SizedBox(height: 8),
+
+                      // === Badge % réduction
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 8,
@@ -180,7 +205,9 @@ class _PromoState extends State<Promo> {
                           ),
                         ),
                       ),
+
                       const SizedBox(height: 8),
+
                       const Text(
                         '20% de réduction',
                         style: TextStyle(
@@ -188,8 +215,11 @@ class _PromoState extends State<Promo> {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
+
                       const SizedBox(height: 5),
+
                       const Text('2x Bière Blonde, 1x Sandwich Club'),
+
                       const SizedBox(height: 12),
                     ],
                   ),

@@ -131,6 +131,8 @@ class _ProductState extends State<Product> {
                                   ),
                                   padding: const EdgeInsets.all(5),
                                   child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Container(
                                         height: 100,
@@ -147,53 +149,58 @@ class _ProductState extends State<Product> {
                                         ),
                                       ),
                                       const SizedBox(width: 8),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Text(
-                                            'Biére blonde',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 5),
-                                          const Text(
-                                            "4.50fc",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 2),
-                                          Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: const [
-                                              Text(
-                                                "Stock : ",
-                                                style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 16,
-                                                ),
+
+                                      // ✅ Ajout de Expanded ici
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const Text(
+                                              'Biére blonde',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
                                               ),
-                                              Text(
-                                                "24",
-                                                style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 6),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                              left: 10,
+                                              overflow: TextOverflow
+                                                  .ellipsis, // évite le débordement
                                             ),
-                                            child: Row(
+                                            const SizedBox(height: 5),
+                                            const Text(
+                                              "4.50€",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 2),
+                                            Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: const [
+                                                Text(
+                                                  "Stock : ",
+                                                  style: TextStyle(
+                                                    color: Colors.grey,
+                                                    fontSize: 16,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  "24",
+                                                  style: TextStyle(
+                                                    color: Colors.grey,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 6),
+                                            Wrap(
+                                              spacing:
+                                                  10, // espace horizontal entre les éléments
+                                              runSpacing:
+                                                  6, // espace vertical si ça passe à la ligne
                                               children: [
                                                 Container(
                                                   padding:
@@ -221,7 +228,6 @@ class _ProductState extends State<Product> {
                                                     ),
                                                   ),
                                                 ),
-                                                const SizedBox(width: 10),
                                                 Container(
                                                   padding:
                                                       const EdgeInsets.symmetric(
@@ -250,8 +256,8 @@ class _ProductState extends State<Product> {
                                                 ),
                                               ],
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -410,7 +416,7 @@ class _ProductState extends State<Product> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey.shade400),
+                          color: Color(0xFFF5F6FA),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: DropdownButton<OrderStatus?>(
@@ -449,7 +455,7 @@ class _ProductState extends State<Product> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey.shade400),
+                          color: Color(0xFFF5F6FA),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: DropdownButton<String?>(
@@ -497,7 +503,7 @@ class _ProductState extends State<Product> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey.shade400),
+                          color: Color(0xFFF5F6FA),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: DropdownButton<String?>(
@@ -539,7 +545,7 @@ class _ProductState extends State<Product> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey.shade400),
+                          color: Color(0xFFF5F6FA),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: DropdownButton<String?>(

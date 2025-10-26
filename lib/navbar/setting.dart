@@ -157,10 +157,17 @@ class _SettingState extends State<Setting> {
           const Row(
             children: [
               Icon(Icons.person, color: Colors.blue),
-              SizedBox(width: 8),
-              Text(
-                "Profil administrateur",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              const SizedBox(width: 8),
+              Expanded(
+                // texte responsive
+                child: Text(
+                  "Profil administrateur",
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                  overflow: TextOverflow.ellipsis, // ajoute "..." si trop long
+                ),
               ),
             ],
           ),
@@ -179,17 +186,23 @@ class _SettingState extends State<Setting> {
                 ),
               ),
               const SizedBox(width: 16),
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey.shade200,
-                  elevation: 0,
-                  foregroundColor: Colors.black87,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+              // bouton responsive
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey.shade200,
+                    elevation: 0,
+                    foregroundColor: Colors.black87,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text(
+                    "Changer la photo",
+                    overflow: TextOverflow.ellipsis, // texte qui s’adapte
                   ),
                 ),
-                child: const Text("Changer la photo"),
               ),
             ],
           ),
@@ -228,7 +241,9 @@ class _SettingState extends State<Setting> {
           ),
           const SizedBox(height: 20),
           ElevatedButton.icon(
-            onPressed: () {},
+            onPressed: () {
+              _showChangePasswordDialog();
+            },
             icon: const Icon(Icons.lock_outline),
             label: const Text("Changer le mot de passe"),
             style: ElevatedButton.styleFrom(
@@ -268,24 +283,29 @@ class _SettingState extends State<Setting> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // ===== Header =====
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Colonne avec le titre et le sous-texte
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  "Gestion du personnel",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-                SizedBox(height: 4),
-                Text("2 membres actifs", style: TextStyle(color: Colors.grey)),
-              ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text(
+                    "Gestion du personnel",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    "2 membres actifs",
+                    style: TextStyle(color: Colors.grey),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
             ),
-
-            // Bouton à droite
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
@@ -305,52 +325,64 @@ class _SettingState extends State<Setting> {
             ),
           ],
         ),
+        const SizedBox(height: 20),
 
-        SizedBox(height: 20),
-        Container(
-          height: 150,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Colors.white,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 28,
-                      backgroundColor: Colors.blue,
-                      child: Text(
-                        "JD",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
+        // ===== Membres =====
+        ...["Marie Martin", "Pierre Duran", "Jean Dupont"].map((name) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 20),
+            child: Container(
+              height: 150,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.white,
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 28,
+                    backgroundColor: Colors.blue,
+                    child: Text(
+                      name.split(" ").map((e) => e[0]).join(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(width: 20),
-                    Column(
+                  ),
+                  const SizedBox(width: 12),
+                  // Colonne avec infos
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Marie Martin",
-                          style: TextStyle(
+                          name,
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: 18,
+                            fontSize: 16,
                           ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                         Text(
-                          "Marie@bar.com",
-                          style: TextStyle(color: Colors.grey, fontSize: 14.5),
+                          "${name.split(" ")[0].toLowerCase()}@bar.com",
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        SizedBox(height: 5),
-                        Row(
+                        const SizedBox(height: 5),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 4,
                           children: [
                             Container(
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                 horizontal: 6,
                                 vertical: 4,
                               ),
@@ -358,11 +390,10 @@ class _SettingState extends State<Setting> {
                                 color: const Color.fromARGB(67, 158, 158, 158),
                                 borderRadius: BorderRadius.circular(5),
                               ),
-                              child: Text("serveur"),
+                              child: const Text("Rôle"),
                             ),
-                            SizedBox(width: 15),
                             Container(
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                 horizontal: 6,
                                 vertical: 4,
                               ),
@@ -370,7 +401,7 @@ class _SettingState extends State<Setting> {
                                 color: const Color.fromARGB(69, 105, 240, 175),
                                 borderRadius: BorderRadius.circular(5),
                               ),
-                              child: Text(
+                              child: const Text(
                                 "actif",
                                 style: TextStyle(color: Colors.green),
                               ),
@@ -379,228 +410,252 @@ class _SettingState extends State<Setting> {
                         ),
                       ],
                     ),
-
-                    SizedBox(width: 50),
-                    Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.pause, color: Colors.orange),
-                        ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.delete, color: Colors.red),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-        SizedBox(height: 20),
-        Container(
-          height: 150,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Colors.white,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 28,
-                      backgroundColor: Colors.blue,
-                      child: Text(
-                        "PD",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
+                  ),
+                  // Actions
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(Icons.pause, color: Colors.orange),
                       ),
-                    ),
-                    SizedBox(width: 20),
-                    Column(
-                      children: [
-                        Text(
-                          "Pierre Duran",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                        Text(
-                          "Pierre@bar.com",
-                          style: TextStyle(color: Colors.grey, fontSize: 14.5),
-                        ),
-                        SizedBox(height: 5),
-                        Row(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 6,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color.fromARGB(67, 158, 158, 158),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Text("Barman"),
-                            ),
-                            SizedBox(width: 15),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 6,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color.fromARGB(69, 105, 240, 175),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Text(
-                                "actif",
-                                style: TextStyle(color: Colors.green),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-
-                    SizedBox(width: 50),
-                    Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.pause, color: Colors.orange),
-                        ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.delete, color: Colors.red),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-        SizedBox(height: 20),
-        Container(
-          height: 150,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Colors.white,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 28,
-                      backgroundColor: Colors.blue,
-                      child: Text(
-                        "JD",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(Icons.delete, color: Colors.red),
                       ),
-                    ),
-                    SizedBox(width: 20),
-                    Column(
-                      children: [
-                        Text(
-                          "Marie Martin",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                        Text(
-                          "Marie@bar.com",
-                          style: TextStyle(color: Colors.grey, fontSize: 15),
-                        ),
-                        SizedBox(height: 5),
-                        Row(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 6,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color.fromARGB(67, 158, 158, 158),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Text("serveur"),
-                            ),
-                            SizedBox(width: 15),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 6,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color.fromARGB(69, 240, 105, 105),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Text(
-                                "inactif",
-                                style: TextStyle(color: Colors.red),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-
-                    SizedBox(width: 50),
-                    Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.pause, color: Colors.orange),
-                        ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.delete, color: Colors.red),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ),
-        SizedBox(height: 20),
+          );
+        }).toList(),
+
+        // ===== Bouton Sauvegarder =====
         ElevatedButton(
           onPressed: () {},
-          style: ButtonStyle(
-            backgroundColor: MaterialStatePropertyAll(Colors.blue),
-            minimumSize: MaterialStatePropertyAll(Size(double.infinity, 48)),
-            shape: MaterialStatePropertyAll(
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blue,
+            minimumSize: const Size(double.infinity, 48),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
             ),
           ),
-          child: Text(
+          child: const Text(
             "Sauvegarder les modifications",
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ),
       ],
+    );
+  }
+
+  void _showChangePasswordDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 20,
+          ),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 500), // largeur max
+            child: StatefulBuilder(
+              builder: (context, setState) {
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // === Titre ===
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Expanded(
+                            child: Text(
+                              "Changer le mot de passe",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () => Navigator.pop(context),
+                            icon: const Icon(Icons.close),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+
+                      // === Mot de passe actuel ===
+                      const Text("Mot de passe actuel"),
+                      const SizedBox(height: 6),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          hintText: ".............",
+                          prefixIcon: const Icon(
+                            Icons.lock,
+                            color: Colors.grey,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // === Nouveau mot de passe ===
+                      const Text("Nouveau mot de passe"),
+                      const SizedBox(height: 6),
+                      TextField(
+                        decoration: InputDecoration(
+                          hintText: "...............",
+                          prefixIcon: const Icon(Icons.lock_outline),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        'Au moins 6 caractères',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // === Téléphone ===
+                      const Text("Téléphone"),
+                      const SizedBox(height: 6),
+                      TextField(
+                        decoration: InputDecoration(
+                          hintText: ".............",
+                          prefixIcon: const Icon(
+                            Icons.confirmation_num_outlined,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // === Conseils sécurité ===
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(37, 33, 149, 243),
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(color: Colors.lightBlueAccent),
+                        ),
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.info_outline,
+                                  color: Color.fromARGB(255, 16, 53, 117),
+                                ),
+                                SizedBox(width: 5),
+                                Expanded(
+                                  child: Text(
+                                    "Conseils de sécurité :",
+                                    style: TextStyle(
+                                      color: Color.fromARGB(255, 16, 53, 117),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              ". Utilisez au moins 8 caractères",
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 16, 53, 117),
+                              ),
+                            ),
+                            Text(
+                              ". Incluez des chiffres et des lettres",
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 16, 53, 117),
+                              ),
+                            ),
+                            Text(
+                              ". Évitez les mots trop simples",
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 16, 53, 117),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+
+                      // === Boutons ===
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: () => Navigator.pop(context),
+                              style: OutlinedButton.styleFrom(
+                                minimumSize: const Size(double.infinity, 48),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: const Text("Annuler"),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {},
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                                minimumSize: const Size(double.infinity, 48),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  Icon(Icons.save, color: Colors.white),
+                                  SizedBox(width: 10),
+                                  Flexible(
+                                    child: Text(
+                                      "Modifier",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -36,7 +36,6 @@ class _StatPageState extends State<StatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       body: Stack(
         children: [
           Column(
@@ -244,7 +243,7 @@ class StatBody extends StatelessWidget {
                   icon: Icons.calendar_today,
                   color: Colors.purple.shade50,
                   title: "Semaine",
-                  value: "",
+                  value: "20.9",
                   subtitle: "7 derniers jours",
                 ),
               ),
@@ -254,7 +253,7 @@ class StatBody extends StatelessWidget {
                   icon: Icons.warning_amber_rounded,
                   color: Colors.orange.shade50,
                   title: "Stock bas",
-                  value: "",
+                  value: "10",
                   subtitle: "Produits",
                 ),
               ),
@@ -379,55 +378,77 @@ class StatBody extends StatelessWidget {
 
 class _StatCard extends StatelessWidget {
   final IconData icon;
+  final Color color;
   final String title;
   final String value;
   final String subtitle;
-  final Color color;
 
   const _StatCard({
     required this.icon,
+    required this.color,
     required this.title,
     required this.value,
     required this.subtitle,
-    required this.color,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // ✅ Icône et titre sur la même ligne
-          Row(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(icon, color: Colors.black54, size: 24),
-              const SizedBox(width: 8),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14,
+              // ✅ Icône + titre (texte qui s'adapte)
+              Row(
+                children: [
+                  Icon(icon, color: Colors.black54, size: 22),
+                  const SizedBox(width: 6),
+                  // Le texte s’adapte à la largeur disponible
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                      overflow: TextOverflow.ellipsis, // coupe si trop long
+                      maxLines: 1,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              // ✅ Valeur — centrée, sans overflow
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  value.isEmpty ? "—" : value,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
+              const SizedBox(height: 4),
+              // ✅ Sous-titre — petit texte qui s’adapte
+              Text(
+                subtitle,
+                style: const TextStyle(color: Colors.grey, fontSize: 12),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
             ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            value.isEmpty ? "—" : value,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            subtitle,
-            style: const TextStyle(color: Colors.grey, fontSize: 12),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
