@@ -379,7 +379,7 @@ class _PromoState extends State<Promo> {
                           context: context,
                           initialDate: dateDebut,
                           firstDate: DateTime(2023),
-                          lastDate: DateTime(2026),
+                          lastDate: DateTime(2029),
                         );
                         if (picked != null) setState(() => dateDebut = picked);
                       },
@@ -403,7 +403,7 @@ class _PromoState extends State<Promo> {
                           context: context,
                           initialDate: dateFin,
                           firstDate: DateTime(2023),
-                          lastDate: DateTime(2026),
+                          lastDate: DateTime(3000),
                         );
                         if (picked != null) setState(() => dateFin = picked);
                       },

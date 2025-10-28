@@ -9,6 +9,7 @@ class Setting extends StatefulWidget {
 
 class _SettingState extends State<Setting> {
   int selectedTab = 0; // 0 = Profil, 1 = Personnel
+  String? selectedRole; // 🔹 variable pour stocker le rôle choisi
 
   @override
   Widget build(BuildContext context) {
@@ -314,7 +315,9 @@ class _SettingState extends State<Setting> {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              onPressed: () {},
+              onPressed: () {
+                _showAddPersonalDialog();
+              },
               child: const Text(
                 "+ Ajouter",
                 style: TextStyle(
@@ -578,22 +581,30 @@ class _SettingState extends State<Setting> {
                               ],
                             ),
                             SizedBox(height: 8),
-                            Text(
-                              ". Utilisez au moins 8 caractères",
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 16, 53, 117),
-                              ),
-                            ),
-                            Text(
-                              ". Incluez des chiffres et des lettres",
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 16, 53, 117),
-                              ),
-                            ),
-                            Text(
-                              ". Évitez les mots trop simples",
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 16, 53, 117),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    ". Utilisez au moins 8 caractères",
+                                    style: TextStyle(
+                                      color: Color.fromARGB(255, 16, 53, 117),
+                                    ),
+                                  ),
+                                  Text(
+                                    ". Incluez des chiffres et des lettres",
+                                    style: TextStyle(
+                                      color: Color.fromARGB(255, 16, 53, 117),
+                                    ),
+                                  ),
+                                  Text(
+                                    ". Évitez les mots trop simples",
+                                    style: TextStyle(
+                                      color: Color.fromARGB(255, 16, 53, 117),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
@@ -643,6 +654,172 @@ class _SettingState extends State<Setting> {
                                     ),
                                   ),
                                 ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showAddPersonalDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 20,
+          ),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 500), // largeur max
+            child: StatefulBuilder(
+              builder: (context, setState) {
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // === Titre ===
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Expanded(
+                            child: Text(
+                              "Ajouter un membre",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () => Navigator.pop(context),
+                            icon: const Icon(Icons.close),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        "Nom complet",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: "Nom complet",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        "Email",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: "Email",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        "Rôle",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+
+                      DropdownButtonFormField<String>(
+                        value: selectedRole,
+                        decoration: InputDecoration(
+                          labelText: "Rôle",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 14,
+                          ),
+                        ),
+                        items: const [
+                          DropdownMenuItem(
+                            value: "barman",
+                            child: Text("Barman"),
+                          ),
+                          DropdownMenuItem(
+                            value: "serveur",
+                            child: Text("Serveur"),
+                          ),
+                          DropdownMenuItem(
+                            value: "client",
+                            child: Text("Client"),
+                          ),
+                        ],
+                        onChanged: (value) {
+                          selectedRole = value; // met à jour la sélection
+                        },
+                        validator: (value) => value == null
+                            ? "Veuillez sélectionner un rôle"
+                            : null,
+                      ),
+
+                      SizedBox(height: 18),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: () => Navigator.pop(context),
+                              style: OutlinedButton.styleFrom(
+                                minimumSize: const Size(double.infinity, 48),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: const Text("Annuler"),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {},
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                                minimumSize: const Size(double.infinity, 48),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: Text(
+                                "Ajouter",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ),

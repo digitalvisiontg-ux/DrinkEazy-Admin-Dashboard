@@ -586,24 +586,40 @@ class _ProductState extends State<Product> {
 void _bottomSheet(BuildContext context) {
   showModalBottomSheet(
     context: context,
-    isScrollControlled: true, // permet au contenu de s'adapter à la hauteur
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent, // pour un effet de fondu plus propre
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
     builder: (BuildContext bc) {
       return SingleChildScrollView(
         child: Container(
+          margin: const EdgeInsets.only(top: 10),
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+            top: 20,
+          ),
           decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20),
               topRight: Radius.circular(20),
             ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 10,
+                offset: Offset(0, -2),
+              ),
+            ],
           ),
-          padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // === Header ===
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -613,80 +629,135 @@ void _bottomSheet(BuildContext context) {
                   ),
                   IconButton(
                     onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close),
+                    icon: const Icon(Icons.close, color: Colors.grey),
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 25),
 
+              // === Champ Nom ===
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Nom du produit",
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+              const SizedBox(height: 6),
               TextFormField(
                 decoration: InputDecoration(
-                  labelText: 'Nom du produit',
-                  labelStyle: TextStyle(color: Colors.grey),
-                  border: OutlineInputBorder(),
+                  hintText: 'Ex: Pizza Margherita',
+                  labelStyle: const TextStyle(color: Colors.grey),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
 
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Prix (€)',
-                  labelStyle: TextStyle(color: Colors.grey),
-                  border: OutlineInputBorder(),
+              // === Champ Prix ===
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Prix (€)",
+                  style: TextStyle(fontWeight: FontWeight.w600),
                 ),
               ),
-              SizedBox(height: 20),
-
+              const SizedBox(height: 6),
               TextFormField(
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  labelText: 'Stock initial',
-                  labelStyle: TextStyle(color: Colors.grey),
-                  border: OutlineInputBorder(),
+                  hintText: 'Ex: 9.99',
+                  labelStyle: const TextStyle(color: Colors.grey),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 20),
 
+              // === Champ Stock ===
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Stock initial",
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+              const SizedBox(height: 6),
+              TextFormField(
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  hintText: 'Ex: 25',
+                  labelStyle: const TextStyle(color: Colors.grey),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 25),
+
+              // === Description ===
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Description (optionnel)",
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+              const SizedBox(height: 6),
               TextFormField(
                 maxLines: 3,
                 decoration: InputDecoration(
-                  labelText: 'Description (optionnel)',
-                  labelStyle: TextStyle(color: Colors.grey),
-                  border: OutlineInputBorder(),
+                  hintText: 'Ajoutez une courte description du produit...',
+                  labelStyle: const TextStyle(color: Colors.grey),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 30),
 
-              // Boutons
+              // === Boutons ===
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      minimumSize: const Size(150, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        side: BorderSide(color: Colors.grey),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        elevation: 0,
+                        side: const BorderSide(color: Colors.grey),
+                        minimumSize: const Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                    ),
-                    child: const Text(
-                      "Annuler",
-                      style: TextStyle(color: Colors.black),
+                      child: const Text(
+                        "Annuler",
+                        style: TextStyle(color: Colors.black),
+                      ),
                     ),
                   ),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      minimumSize: const Size(150, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  const SizedBox(width: 15),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        elevation: 1,
+                        minimumSize: const Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                    ),
-                    child: const Text(
-                      "Ajouter",
-                      style: TextStyle(color: Colors.white),
+                      child: const Text(
+                        "Ajouter",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
                 ],
