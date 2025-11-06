@@ -16,6 +16,30 @@ class _PromoState extends State<Promo> {
 
   DateTime dateDebut = DateTime(2024, 1, 15);
   DateTime dateFin = DateTime(2024, 2, 15);
+   bool showNotifications = false;
+
+  final List<Map<String, dynamic>> notifications = [
+    {
+      'title': 'Nouvelle commande #1234 - Table 5',
+      'time': 'Il y a 2 min',
+      'color': Colors.blue,
+    },
+    {
+      'title': 'Stock faible: Coca-Cola',
+      'time': 'Il y a 5 min',
+      'color': Colors.red,
+    },
+    {
+      'title': 'Promotion Happy Hour activée',
+      'time': 'Il y a 10 min',
+      'color': Colors.green,
+    },
+    {
+      'title': 'Commande #1233 validée',
+      'time': 'Il y a 15 min',
+      'color': Colors.blue,
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {

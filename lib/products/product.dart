@@ -11,324 +11,247 @@ enum OrderStatus { pending, confirmed, refused }
 
 class _ProductState extends State<Product> {
   bool _showFilters = false;
+  bool showNotifications = false;
   OrderStatus? _statusFilter;
   String? _tableFilter;
   String? _dateFilter;
   String? _amountFilter;
 
+  final List<Map<String, dynamic>> notifications = [
+    {
+      "title": "Nouvelle commande reçue",
+      "time": "Il y a 5 min",
+      "color": Colors.green,
+    },
+    {
+      "title": "Stock presque épuisé",
+      "time": "Il y a 15 min",
+      "color": Colors.orange,
+    },
+    {
+      "title": "Produit ajouté avec succès",
+      "time": "Il y a 30 min",
+      "color": Colors.blue,
+    },
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          AppBar(
-            title: const Text('Produits'),
-            elevation: 0,
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black,
-            actions: [
-              IconButton(
-                onPressed: () {},
-                icon: Stack(
-                  clipBehavior: Clip
-                      .none, // important pour que le badge dépasse légèrement
-                  children: [
-                    const Icon(Icons.notifications_none, size: 30),
-                    Positioned(
-                      right: -8, // décale légèrement vers l'extérieur
-                      top: -10, // décale légèrement vers le haut
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 4,
-                          vertical: 1,
+    return GestureDetector(
+      // Fermer le popup si on clique ailleurs
+      onTap: () {
+        if (showNotifications) {
+          setState(() {
+            showNotifications = false;
+          });
+        }
+      },
+      child: Scaffold(
+        body: Stack(
+          children: [
+            // --- Contenu principal ---
+            Column(
+              children: [
+                AppBar(
+                  title: const Text(
+                    'Produits',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  elevation: 0,
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black,
+                  actions: [
+                    Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.notifications_none, size: 30),
+                          onPressed: () {
+                            setState(() {
+                              showNotifications = !showNotifications;
+                            });
+                          },
                         ),
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        constraints: const BoxConstraints(
-                          minWidth: 20,
-                          minHeight: 20,
-                        ),
-                        child: const Text(
-                          '4',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
+                        if (notifications.isNotEmpty)
+                          Positioned(
+                            right: 6,
+                            top: 6,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                              constraints: const BoxConstraints(
+                                minWidth: 18,
+                                minHeight: 18,
+                              ),
+                              child: Text(
+                                '${notifications.length}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
                           ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
+                      ],
                     ),
+                    const SizedBox(width: 12),
                   ],
                 ),
-              ),
-
-              // Icône filtre
-              const SizedBox(width: 12),
-            ],
-          ),
-          _buildSearchBar(),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                children: [
-                  if (_showFilters) _buildFilters(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                const SizedBox(height: 20),
+                _buildSearchBar(),
+                if (_showFilters) _buildFilters(),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
                       children: [
-                        const Text(
-                          '3 produits',
-                          style: TextStyle(color: Colors.grey),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: const [
+                              Text(
+                                '3 produits',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            minimumSize: const Size(double.infinity, 50),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              side: const BorderSide(
+                                color: Colors.blue,
+                                width: 1.5,
+                              ),
+                            ),
+                            elevation: 3,
+                          ),
+                          onPressed: () {
+                            _bottomSheet(context);
+                          },
+                          child: const Text(
+                            "+ Ajouter un produit",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        _buildProductCard(),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            // --- Popup Notifications ---
+            if (showNotifications)
+              Positioned(
+                right: 10,
+                top: kToolbarHeight + 10,
+                child: Material(
+                  elevation: 8,
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    constraints: const BoxConstraints(maxHeight: 350),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          child: Text(
+                            "Notifications",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                        const Divider(height: 1),
+                        if (notifications.isEmpty)
+                          Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                              children: const [
+                                Icon(
+                                  Icons.notifications_off,
+                                  color: Colors.grey,
+                                  size: 40,
+                                ),
+                                SizedBox(height: 10),
+                                Text(
+                                  "Vous n'avez pas de notifications",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        else
+                          Expanded(
+                            child: ListView.builder(
+                              padding: EdgeInsets.zero,
+                              itemCount: notifications.length,
+                              itemBuilder: (context, index) {
+                                final notif = notifications[index];
+                                return ListTile(
+                                  leading: Icon(
+                                    Icons.circle,
+                                    size: 10,
+                                    color: notif['color'],
+                                  ),
+                                  title: Text(notif['title']),
+                                  subtitle: Text(
+                                    notif['time'],
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        const Divider(height: 1),
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              notifications.clear();
+                              showNotifications = false;
+                            });
+                          },
+                          child: const Text(
+                            "Marquer tout comme lu",
+                            style: TextStyle(color: Colors.blue),
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      minimumSize: const Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        side: const BorderSide(color: Colors.blue, width: 1.5),
-                      ),
-                      elevation: 3,
-                    ),
-                    onPressed: () {
-                      _bottomSheet(context);
-                    },
-                    child: const Text(
-                      "+ Ajouter un produit",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Card(
-                    color: Colors.white,
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Stack(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(3),
-                                child: Container(
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  padding: const EdgeInsets.all(5),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        height: 100,
-                                        width: 100,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                            20,
-                                          ),
-                                        ),
-                                        padding: const EdgeInsets.all(10),
-                                        child: Image.asset(
-                                          'image/freepik_assistant_1756911135386.png',
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-
-                                      // ✅ Ajout de Expanded ici
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const Text(
-                                              'Biére blonde',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                              ),
-                                              overflow: TextOverflow
-                                                  .ellipsis, // évite le débordement
-                                            ),
-                                            const SizedBox(height: 5),
-                                            const Text(
-                                              "4.50€",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 2),
-                                            Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: const [
-                                                Text(
-                                                  "Stock : ",
-                                                  style: TextStyle(
-                                                    color: Colors.grey,
-                                                    fontSize: 16,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  "24",
-                                                  style: TextStyle(
-                                                    color: Colors.grey,
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 6),
-                                            Wrap(
-                                              spacing:
-                                                  10, // espace horizontal entre les éléments
-                                              runSpacing:
-                                                  6, // espace vertical si ça passe à la ligne
-                                              children: [
-                                                Container(
-                                                  padding:
-                                                      const EdgeInsets.symmetric(
-                                                        horizontal: 6,
-                                                        vertical: 4,
-                                                      ),
-                                                  decoration: BoxDecoration(
-                                                    color: const Color.fromARGB(
-                                                      98,
-                                                      68,
-                                                      137,
-                                                      255,
-                                                    ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          8,
-                                                        ),
-                                                  ),
-                                                  child: const Text(
-                                                    "Bière",
-                                                    style: TextStyle(
-                                                      color: Colors.blue,
-                                                      fontSize: 16,
-                                                    ),
-                                                  ),
-                                                ),
-                                                Container(
-                                                  padding:
-                                                      const EdgeInsets.symmetric(
-                                                        horizontal: 6,
-                                                        vertical: 4,
-                                                      ),
-                                                  decoration: BoxDecoration(
-                                                    color: const Color.fromARGB(
-                                                      117,
-                                                      105,
-                                                      240,
-                                                      175,
-                                                    ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          8,
-                                                        ),
-                                                  ),
-                                                  child: const Text(
-                                                    "Disponible",
-                                                    style: TextStyle(
-                                                      color: Colors.green,
-                                                      fontSize: 16,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-
-                              Positioned(
-                                top: 20,
-                                right: 15,
-                                child: PopupMenuButton<String>(
-                                  icon: const Icon(
-                                    Icons.more_vert,
-                                    color: Colors.grey,
-                                    size: 24,
-                                  ),
-                                  onSelected: (String value) {
-                                    setState(() {
-                                      if (value == 'edit') {
-                                        // Modifier
-                                      } else if (value == 'delete') {
-                                        // Supprimer
-                                      } else if (value == 'details') {
-                                        // Détails
-                                      }
-                                    });
-                                  },
-                                  itemBuilder: (BuildContext context) => [
-                                    const PopupMenuItem(
-                                      value: 'edit',
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.edit, color: Colors.blue),
-                                          SizedBox(width: 8),
-                                          Text('Modifier'),
-                                        ],
-                                      ),
-                                    ),
-                                    const PopupMenuItem(
-                                      value: 'delete',
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.delete, color: Colors.red),
-                                          SizedBox(width: 8),
-                                          Text('Supprimer'),
-                                        ],
-                                      ),
-                                    ),
-                                    const PopupMenuItem(
-                                      value: 'details',
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.info, color: Colors.grey),
-                                          SizedBox(width: 8),
-                                          Text('Détails'),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -403,175 +326,42 @@ class _ProductState extends State<Product> {
               ],
             ),
             const SizedBox(height: 10),
-
-            // Première ligne : Statut & Table
+            // Exemple de filtres
             Row(
               children: [
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text("Statut"),
-                      const SizedBox(height: 6),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        decoration: BoxDecoration(
-                          color: Color(0xFFF5F6FA),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: DropdownButton<OrderStatus?>(
-                          isExpanded: true,
-                          underline: const SizedBox(),
-                          value: _statusFilter,
-                          items: const [
-                            DropdownMenuItem(value: null, child: Text('Tous')),
-                            DropdownMenuItem(
-                              value: OrderStatus.pending,
-                              child: Text('En attente'),
-                            ),
-                            DropdownMenuItem(
-                              value: OrderStatus.confirmed,
-                              child: Text('Confirmé'),
-                            ),
-                            DropdownMenuItem(
-                              value: OrderStatus.refused,
-                              child: Text('Refusé'),
-                            ),
-                          ],
-                          onChanged: (value) =>
-                              setState(() => _statusFilter = value),
-                        ),
+                  child: DropdownButton<OrderStatus?>(
+                    isExpanded: true,
+                    value: _statusFilter,
+                    items: const [
+                      DropdownMenuItem(value: null, child: Text('Tous')),
+                      DropdownMenuItem(
+                        value: OrderStatus.pending,
+                        child: Text('En attente'),
+                      ),
+                      DropdownMenuItem(
+                        value: OrderStatus.confirmed,
+                        child: Text('Confirmé'),
+                      ),
+                      DropdownMenuItem(
+                        value: OrderStatus.refused,
+                        child: Text('Refusé'),
                       ),
                     ],
+                    onChanged: (value) => setState(() => _statusFilter = value),
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text("Table"),
-                      const SizedBox(height: 6),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        decoration: BoxDecoration(
-                          color: Color(0xFFF5F6FA),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: DropdownButton<String?>(
-                          isExpanded: true,
-                          underline: const SizedBox(),
-                          value: _tableFilter,
-                          items: const [
-                            DropdownMenuItem(
-                              value: null,
-                              child: Text('Toutes'),
-                            ),
-                            DropdownMenuItem(
-                              value: '1',
-                              child: Text('Table 1'),
-                            ),
-                            DropdownMenuItem(
-                              value: '2',
-                              child: Text('Table 2'),
-                            ),
-                            DropdownMenuItem(
-                              value: '3',
-                              child: Text('Table 3'),
-                            ),
-                          ],
-                          onChanged: (value) =>
-                              setState(() => _tableFilter = value),
-                        ),
-                      ),
+                  child: DropdownButton<String?>(
+                    isExpanded: true,
+                    value: _tableFilter,
+                    items: const [
+                      DropdownMenuItem(value: null, child: Text('Toutes')),
+                      DropdownMenuItem(value: '1', child: Text('Table 1')),
+                      DropdownMenuItem(value: '2', child: Text('Table 2')),
                     ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-
-            // Deuxième ligne : Date & Montant
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text("Date"),
-                      const SizedBox(height: 6),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        decoration: BoxDecoration(
-                          color: Color(0xFFF5F6FA),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: DropdownButton<String?>(
-                          isExpanded: true,
-                          underline: const SizedBox(),
-                          value: _dateFilter,
-                          items: const [
-                            DropdownMenuItem(
-                              value: null,
-                              child: Text('Toutes'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'today',
-                              child: Text("Aujourd'hui"),
-                            ),
-                            DropdownMenuItem(
-                              value: 'week',
-                              child: Text("Cette semaine"),
-                            ),
-                            DropdownMenuItem(
-                              value: 'month',
-                              child: Text("Ce mois"),
-                            ),
-                          ],
-                          onChanged: (value) =>
-                              setState(() => _dateFilter = value),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text("Montant"),
-                      const SizedBox(height: 6),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        decoration: BoxDecoration(
-                          color: Color(0xFFF5F6FA),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: DropdownButton<String?>(
-                          isExpanded: true,
-                          underline: const SizedBox(),
-                          value: _amountFilter,
-                          items: const [
-                            DropdownMenuItem(value: null, child: Text('Tous')),
-                            DropdownMenuItem(
-                              value: '0-50',
-                              child: Text('0 - 50 €'),
-                            ),
-                            DropdownMenuItem(
-                              value: '50-100',
-                              child: Text('50 - 100 €'),
-                            ),
-                            DropdownMenuItem(
-                              value: '+100',
-                              child: Text('+100 €'),
-                            ),
-                          ],
-                          onChanged: (value) =>
-                              setState(() => _amountFilter = value),
-                        ),
-                      ),
-                    ],
+                    onChanged: (value) => setState(() => _tableFilter = value),
                   ),
                 ),
               ],
@@ -581,191 +371,164 @@ class _ProductState extends State<Product> {
       ),
     );
   }
-}
 
-void _bottomSheet(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent, // pour un effet de fondu plus propre
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-    ),
-    builder: (BuildContext bc) {
-      return SingleChildScrollView(
-        child: Container(
-          margin: const EdgeInsets.only(top: 10),
-          padding: EdgeInsets.only(
-            left: 20,
-            right: 20,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-            top: 20,
-          ),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
+  Widget _buildProductCard() {
+    return Card(
+      color: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.asset(
+                'image/freepik_assistant_1756911135386.png',
+                height: 90,
+                width: 90,
+                fit: BoxFit.cover,
+              ),
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 10,
-                offset: Offset(0, -2),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // === Header ===
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "Nouveau produit",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text(
+                    "Bière blonde",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close, color: Colors.grey),
+                  SizedBox(height: 4),
+                  Text(
+                    "4.50€",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
+                  SizedBox(height: 6),
+                  Text("Stock : 24", style: TextStyle(color: Colors.grey)),
                 ],
               ),
-              const SizedBox(height: 25),
-
-              // === Champ Nom ===
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Nom du produit",
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
-              ),
-              const SizedBox(height: 6),
-              TextFormField(
-                decoration: InputDecoration(
-                  hintText: 'Ex: Pizza Margherita',
-                  labelStyle: const TextStyle(color: Colors.grey),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // === Champ Prix ===
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Prix (€)",
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
-              ),
-              const SizedBox(height: 6),
-              TextFormField(
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  hintText: 'Ex: 9.99',
-                  labelStyle: const TextStyle(color: Colors.grey),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // === Champ Stock ===
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Stock initial",
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
-              ),
-              const SizedBox(height: 6),
-              TextFormField(
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  hintText: 'Ex: 25',
-                  labelStyle: const TextStyle(color: Colors.grey),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 25),
-
-              // === Description ===
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Description (optionnel)",
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
-              ),
-              const SizedBox(height: 6),
-              TextFormField(
-                maxLines: 3,
-                decoration: InputDecoration(
-                  hintText: 'Ajoutez une courte description du produit...',
-                  labelStyle: const TextStyle(color: Colors.grey),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 30),
-
-              // === Boutons ===
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        elevation: 0,
-                        side: const BorderSide(color: Colors.grey),
-                        minimumSize: const Size(double.infinity, 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text(
-                        "Annuler",
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        elevation: 1,
-                        minimumSize: const Size(double.infinity, 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text(
-                        "Ajouter",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
-      );
-    },
-  );
+      ),
+    );
+  }
+
+  void _bottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext bc) {
+        return SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.only(
+              left: 20,
+              right: 20,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+              top: 20,
+            ),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Nouveau produit",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.close),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  decoration: InputDecoration(
+                    hintText: "Nom du produit",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  decoration: InputDecoration(
+                    hintText: "Prix (€)",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  decoration: InputDecoration(
+                    hintText: "Stock initial",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    hintText: "Description (optionnel)",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(context),
+
+                        child: const Text(
+                          "Annuler",
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Ici tu peux ajouter la logique pour enregistrer le produit
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                        ),
+                        child: const Text(
+                          "Enregistrer",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 }

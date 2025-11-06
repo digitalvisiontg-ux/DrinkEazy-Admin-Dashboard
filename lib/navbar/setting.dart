@@ -10,120 +10,211 @@ class Setting extends StatefulWidget {
 class _SettingState extends State<Setting> {
   int selectedTab = 0; // 0 = Profil, 1 = Personnel
   String? selectedRole; // 🔹 variable pour stocker le rôle choisi
+  bool showNotifications = false;
+
+  final List<Map<String, dynamic>> notifications = [
+    {
+      'title': 'Nouvelle commande #1234 - Table 5',
+      'time': 'Il y a 2 min',
+      'color': Colors.blue,
+    },
+    {
+      'title': 'Stock faible: Coca-Cola',
+      'time': 'Il y a 5 min',
+      'color': Colors.red,
+    },
+    {
+      'title': 'Promotion Happy Hour activée',
+      'time': 'Il y a 10 min',
+      'color': Colors.green,
+    },
+    {
+      'title': 'Commande #1233 validée',
+      'time': 'Il y a 15 min',
+      'color': Colors.blue,
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Paramètres',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Stack(
-              clipBehavior:
-                  Clip.none, // important pour que le badge dépasse légèrement
-              children: [
-                const Icon(Icons.notifications_none, size: 30),
-                Positioned(
-                  right: -8, // décale légèrement vers l'extérieur
-                  top: -10, // décale légèrement vers le haut
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 4,
-                      vertical: 1,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    constraints: const BoxConstraints(
-                      minWidth: 20,
-                      minHeight: 20,
-                    ),
-                    child: const Text(
-                      '4',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Icône filtre
-          const SizedBox(width: 12),
-        ],
-      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- Onglets Profil / Personnel ---
-            Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(12),
+            AppBar(
+              title: const Text(
+                'Statistique',
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => setState(() => selectedTab = 0),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        decoration: BoxDecoration(
-                          color: selectedTab == 0
-                              ? Colors.white
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(10),
+              elevation: 0,
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              actions: [
+                StatefulBuilder(
+                  builder: (context, setState) {
+                    return Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.notifications_none, size: 30),
+                          onPressed: () {
+                            setState(() {
+                              showNotifications = !showNotifications;
+                            });
+                          },
                         ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          "Profil",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: selectedTab == 0 ? Colors.blue : Colors.grey,
+                        // Badge rouge
+                        if (notifications.isNotEmpty)
+                          Positioned(
+                            right: 6,
+                            top: 6,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                              constraints: const BoxConstraints(
+                                minWidth: 18,
+                                minHeight: 18,
+                              ),
+                              child: Text(
+                                '${notifications.length}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                        // 🔽 Liste des notifications
+                        if (showNotifications)
+                          Positioned(
+                            right: 0,
+                            top: 48,
+                            child: Material(
+                              elevation: 6,
+                              borderRadius: BorderRadius.circular(10),
+                              child: Container(
+                                width: 300,
+                                constraints: const BoxConstraints(
+                                  maxHeight: 250,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: ListView.builder(
+                                  padding: const EdgeInsets.all(8),
+                                  itemCount: notifications.length,
+                                  shrinkWrap: true,
+                                  itemBuilder: (context, index) {
+                                    final notif = notifications[index];
+                                    return ListTile(
+                                      leading: CircleAvatar(
+                                        radius: 6,
+                                        backgroundColor: notif['color'],
+                                      ),
+                                      title: Text(
+                                        notif['title'],
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                      subtitle: Text(
+                                        notif['time'],
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      onTap: () {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              "Notification : ${notif['title']}",
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                ),
+                const SizedBox(width: 12),
+              ],
+            ),
+
+            // --- Onglets Profil / Personnel ---
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => setState(() => selectedTab = 0),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          decoration: BoxDecoration(
+                            color: selectedTab == 0
+                                ? Colors.white
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            "Profil",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: selectedTab == 0
+                                  ? Colors.blue
+                                  : Colors.grey,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => setState(() => selectedTab = 1),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        decoration: BoxDecoration(
-                          color: selectedTab == 1
-                              ? Colors.white
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          "Personnel",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: selectedTab == 1 ? Colors.blue : Colors.grey,
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => setState(() => selectedTab = 1),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          decoration: BoxDecoration(
+                            color: selectedTab == 1
+                                ? Colors.white
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            "Personnel",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: selectedTab == 1
+                                  ? Colors.blue
+                                  : Colors.grey,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
 

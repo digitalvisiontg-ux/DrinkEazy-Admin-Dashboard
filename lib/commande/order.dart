@@ -11,6 +11,30 @@ class OrderPage extends StatefulWidget {
 
 class _OrderPageState extends State<OrderPage> {
   bool _showFilters = false;
+   bool showNotifications = false;
+
+  final List<Map<String, dynamic>> notifications = [
+    {
+      'title': 'Nouvelle commande #1234 - Table 5',
+      'time': 'Il y a 2 min',
+      'color': Colors.blue,
+    },
+    {
+      'title': 'Stock faible: Coca-Cola',
+      'time': 'Il y a 5 min',
+      'color': Colors.red,
+    },
+    {
+      'title': 'Promotion Happy Hour activée',
+      'time': 'Il y a 10 min',
+      'color': Colors.green,
+    },
+    {
+      'title': 'Commande #1233 validée',
+      'time': 'Il y a 15 min',
+      'color': Colors.blue,
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
