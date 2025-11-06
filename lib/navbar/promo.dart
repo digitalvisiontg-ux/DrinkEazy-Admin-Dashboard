@@ -16,7 +16,7 @@ class _PromoState extends State<Promo> {
 
   DateTime dateDebut = DateTime(2024, 1, 15);
   DateTime dateFin = DateTime(2024, 2, 15);
-   bool showNotifications = false;
+  bool showNotifications = false;
 
   final List<Map<String, dynamic>> notifications = [
     {
@@ -43,219 +43,301 @@ class _PromoState extends State<Promo> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Promotions',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                const Icon(Icons.notifications_none, size: 30),
-                Positioned(
-                  right: -8,
-                  top: -10,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 4,
-                      vertical: 1,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    constraints: const BoxConstraints(
-                      minWidth: 20,
-                      minHeight: 20,
-                    ),
-                    child: const Text(
-                      '4',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
+    return GestureDetector(
+      // Fermer le popup si on clique ailleurs
+      onTap: () {
+        if (showNotifications) {
+          setState(() {
+            showNotifications = false;
+          });
+        }
+      },
+      child: Scaffold(
+        body: Stack(
+          children: [
+            // === Contenu principal ===
+            SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Column(
+                  children: [
+                    AppBar(
+                      title: const Text(
+                        'Promotions',
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      textAlign: TextAlign.center,
+                      elevation: 0,
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      actions: [
+                        Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            IconButton(
+                              icon: const Icon(
+                                Icons.notifications_none,
+                                size: 30,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  showNotifications = !showNotifications;
+                                });
+                              },
+                            ),
+                            if (notifications.isNotEmpty)
+                              Positioned(
+                                right: 6,
+                                top: 6,
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  constraints: const BoxConstraints(
+                                    minWidth: 18,
+                                    minHeight: 18,
+                                  ),
+                                  child: Text(
+                                    '${notifications.length}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(width: 12),
+                      ],
                     ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 12),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Column(
-            children: [
-              const SizedBox(height: 15),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  minimumSize: const Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    side: const BorderSide(color: Colors.blue, width: 1.5),
-                  ),
-                  elevation: 3,
-                ),
-                onPressed: _showAddPromoDialog,
-                child: const Text(
-                  "+ Ajouter une Promotion",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
 
-              // Exemple de carte promo
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      LayoutBuilder(
-                        builder: (context, constraints) {
-                          return Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              // === Nom du produit (texte flexible)
-                              Expanded(
-                                child: Text(
-                                  'Bière Blonde',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                  ),
-                                  overflow: TextOverflow
-                                      .ellipsis, // coupe si trop long
-                                ),
-                              ),
-
-                              const SizedBox(width: 8),
-
-                              // === Badge statut
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.greenAccent,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: const Text(
-                                  'Active',
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                              ),
-
-                              const SizedBox(width: 8),
-
-                              // === Icônes d’action (dans un Row compact)
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    onPressed: () {},
-                                    icon: const Icon(
-                                      Icons.edit,
-                                      color: Colors.blue,
-                                    ),
-                                    padding: EdgeInsets.zero,
-                                    constraints: const BoxConstraints(),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  IconButton(
-                                    onPressed: () {},
-                                    icon: const Icon(
-                                      Icons.pause,
-                                      color: Colors.orange,
-                                    ),
-                                    padding: EdgeInsets.zero,
-                                    constraints: const BoxConstraints(),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  IconButton(
-                                    onPressed: () {},
-                                    icon: const Icon(
-                                      Icons.delete_outline,
-                                      color: Colors.red,
-                                    ),
-                                    padding: EdgeInsets.zero,
-                                    constraints: const BoxConstraints(),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-
-                      const SizedBox(height: 8),
-
-                      // === Badge % réduction
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(135, 33, 194, 243),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: const Text(
-                          '% Prix réduit',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.blueAccent,
+                    const SizedBox(height: 15),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        minimumSize: const Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          side: const BorderSide(
+                            color: Colors.blue,
+                            width: 1.5,
                           ),
                         ),
+                        elevation: 3,
                       ),
-
-                      const SizedBox(height: 8),
-
-                      const Text(
-                        '20% de réduction',
+                      onPressed: _showAddPromoDialog,
+                      child: const Text(
+                        "+ Ajouter une Promotion",
                         style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
+                    ),
+                    const SizedBox(height: 10),
 
-                      const SizedBox(height: 5),
+                    // Exemple de carte promo
+                    Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    'Bière Blonde',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.greenAccent,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: const Text(
+                                    'Active',
+                                    style: TextStyle(fontSize: 12),
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () {},
+                                  icon: const Icon(
+                                    Icons.edit,
+                                    color: Colors.blue,
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () {},
+                                  icon: const Icon(
+                                    Icons.pause,
+                                    color: Colors.orange,
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () {},
+                                  icon: const Icon(
+                                    Icons.delete_outline,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color.fromARGB(135, 33, 194, 243),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: const Text(
+                                '% Prix réduit',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.blueAccent,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            const Text(
+                              '20% de réduction',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            const Text('2x Bière Blonde, 1x Sandwich Club'),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
 
-                      const Text('2x Bière Blonde, 1x Sandwich Club'),
-
-                      const SizedBox(height: 12),
-                    ],
+            // === Popup Notifications (en haut à droite) ===
+            if (showNotifications)
+              Positioned(
+                right: 10,
+                top: kToolbarHeight + 10,
+                child: Material(
+                  elevation: 8,
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    constraints: const BoxConstraints(maxHeight: 350),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          child: Text(
+                            "Notifications",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                        const Divider(height: 1),
+                        if (notifications.isEmpty)
+                          Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                              children: const [
+                                Icon(
+                                  Icons.notifications_off,
+                                  color: Colors.grey,
+                                  size: 40,
+                                ),
+                                SizedBox(height: 10),
+                                Text(
+                                  "Vous n'avez pas de notifications",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        else
+                          SizedBox(
+                            height: 250,
+                            child: ListView.builder(
+                              padding: EdgeInsets.zero,
+                              itemCount: notifications.length,
+                              itemBuilder: (context, index) {
+                                final notif = notifications[index];
+                                return ListTile(
+                                  leading: Icon(
+                                    Icons.circle,
+                                    size: 10,
+                                    color: notif['color'],
+                                  ),
+                                  title: Text(notif['title']),
+                                  subtitle: Text(
+                                    notif['time'],
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        const Divider(height: 1),
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              notifications.clear();
+                              showNotifications = false;
+                            });
+                          },
+                          child: const Text(
+                            "Marquer tout comme lu",
+                            style: TextStyle(color: Colors.blue),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ],
-          ),
+          ],
         ),
       ),
     );
   }
 
+  // === Fenêtre d’ajout ou modification ===
   void _showAddPromoDialog() {
     showDialog(
       context: context,
@@ -270,13 +352,11 @@ class _PromoState extends State<Promo> {
           ),
           child: StatefulBuilder(
             builder: (context, setState) {
-              // 👈 Ici on a un setState local
               return SingleChildScrollView(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // === Titre ===
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -294,8 +374,6 @@ class _PromoState extends State<Promo> {
                       ],
                     ),
                     const SizedBox(height: 20),
-
-                    // === Produit concerné ===
                     const Text("Produit concerné"),
                     const SizedBox(height: 6),
                     DropdownButtonFormField<String>(
@@ -318,61 +396,6 @@ class _PromoState extends State<Promo> {
                       ),
                     ),
                     const SizedBox(height: 16),
-
-                    // === Type de promotion ===
-                    const Text("Type de promotion"),
-                    const SizedBox(height: 6),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ChoiceChip(
-                            label: const Text("Prix réduit"),
-                            selected: selectedTypePromo == "Prix réduit",
-                            onSelected: (_) => setState(
-                              () => selectedTypePromo = "Prix réduit",
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: ChoiceChip(
-                            label: const Text("Offre spéciale"),
-                            selected: selectedTypePromo == "Offre spéciale",
-                            onSelected: (_) => setState(
-                              () => selectedTypePromo = "Offre spéciale",
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-
-                    // === Type de réduction ===
-                    const Text("Type de réduction"),
-                    const SizedBox(height: 6),
-                    DropdownButtonFormField<String>(
-                      value: selectedTypeReduction,
-                      items: const [
-                        DropdownMenuItem(
-                          value: "Pourcentage (%)",
-                          child: Text("Pourcentage (%)"),
-                        ),
-                        DropdownMenuItem(
-                          value: "Montant (€)",
-                          child: Text("Montant (€)"),
-                        ),
-                      ],
-                      onChanged: (v) =>
-                          setState(() => selectedTypeReduction = v!),
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // === Valeur de la réduction ===
                     const Text("Valeur de la réduction"),
                     const SizedBox(height: 6),
                     TextField(
@@ -387,60 +410,7 @@ class _PromoState extends State<Promo> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
-
-                    // === Dates ===
-                    const Text("Date de début"),
-                    const SizedBox(height: 6),
-                    TextField(
-                      readOnly: true,
-                      controller: TextEditingController(
-                        text:
-                            "${dateDebut.day}/${dateDebut.month}/${dateDebut.year}",
-                      ),
-                      onTap: () async {
-                        final picked = await showDatePicker(
-                          context: context,
-                          initialDate: dateDebut,
-                          firstDate: DateTime(2023),
-                          lastDate: DateTime(2029),
-                        );
-                        if (picked != null) setState(() => dateDebut = picked);
-                      },
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        suffixIcon: const Icon(Icons.calendar_today),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text("Date de fin"),
-                    const SizedBox(height: 6),
-                    TextField(
-                      readOnly: true,
-                      controller: TextEditingController(
-                        text: "${dateFin.day}/${dateFin.month}/${dateFin.year}",
-                      ),
-                      onTap: () async {
-                        final picked = await showDatePicker(
-                          context: context,
-                          initialDate: dateFin,
-                          firstDate: DateTime(2023),
-                          lastDate: DateTime(3000),
-                        );
-                        if (picked != null) setState(() => dateFin = picked);
-                      },
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        suffixIcon: const Icon(Icons.calendar_today),
-                      ),
-                    ),
                     const SizedBox(height: 24),
-
-                    // === Boutons ===
                     Row(
                       children: [
                         Expanded(
